@@ -8,8 +8,8 @@ This simple project was created to show the usage of the Swagger Codegen Maven P
 * [Status](#status)
 * [Contact](#contact)
 
-#Background
-##Introduction: API-driven development
+# Background
+## Introduction: API-driven development
 Imagine that you are working on a project that aims to create two apps communicating with each other: one has a REST server implemented, receives requests and processes them, and the other one is a client for this server that sends requests to it. 
 To save time, both applications are to be created at the same time by two different teams. Is this possible? Yes, using the so-called API-driven development. 
 
@@ -21,7 +21,7 @@ First, an OpenAPI specification is created, e.g. in a yaml file, which is human-
 
 Both teams receive the API definition and based on it, they can start simultaneously creating an implementation, both server and client.
 
-##What is an OpenAPI?
+## What is an OpenAPI?
 OpenAPI Specification (an API description format for REST APIs) file allows you to describe your entire API, including:
 
    * Available endpoints (/users) and operations on each endpoint (GET /users, POST /users)
@@ -32,7 +32,7 @@ OpenAPI Specification (an API description format for REST APIs) file allows you 
 API specifications can be written i.e. in YAML, what makes it readable and easy to understand. 
 More info: https://swagger.io/docs/specification/about/
 
-##What can you do with an OpenAPI definition?
+## What can you do with an OpenAPI definition?
 Once you have the OpenAPI specification file you can start to write the code manually, or save lots of time by generating it automatically. 
 
 To do so, you can use:
@@ -47,7 +47,7 @@ The generator will generate:
 
 The generator will not generate business logic - you have to implement it yourself, creating classes overwriting methods from the generated interfaces.
 
-#Features
+# Features
 How I worked on this project:
 1. I created and uploaded an OpenAPI definition: you can find it in "resources" directory.
 2. I added Swagger Codegen Maven Plugin dependency and defined a task that generates the REST server classes in the compile time. 
@@ -61,7 +61,7 @@ I created a @Service class that implements the generated "ApiDelegate" interface
 6. I created SwaggerConfig and SwaggerConfigUI classes to create a visual representation of my API. 
 7. In addition, in the build.gradle file you can also see an exemplary task to generate the client side (commented).
 
-##How to test it:
+## How to test it:
 1. You can hit:
 
    `curl http://localhost:8080/albums`
