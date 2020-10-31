@@ -1,0 +1,216 @@
+openapi: 3.0.2
+info: # api information
+  title: API of an imaginary Spotify-like app
+  description: API through which users can browse and and mange albums
+  version: 0.1.0
+  contact:
+    name: Marzena Kaa
+    url: https://zrobtowinternecie.pl
+servers:
+  - url: http://localhost:8080/
+    description: Test server
+paths: # The paths section defines individual endpoints (paths) in API, and the HTTP methods (operations) supported by these endpoints.
+  /albums:
+    get:
+      summary: Returns a list all the albums
+      operationId: getAlbums
+      responses:
+        '200':
+          description: An array of albums
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Album'
+        '400':
+          description: Sorry, something went wrong
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Creates an album
+      operationId: createAlbum
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Album"
+      responses:
+        '201':
+          description: Album was succesfully created
+        '400':
+          description: Album cannot be created
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /albums/{albumId}:
+    get:
+      summary: Returns the details of a specific album
+      operationId: showAlbumById
+      parameters:
+        - name: albumId
+          in: path
+          required: true
+          description: The id of the album to retrieve
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: An album object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Album"
+        '400':
+          description: The specified album ID is invalid (not a number)
+        '401':
+          description: An album with the specified ID was not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Updates a specific album
+      operationId: updateAlbumById
+      parameters:
+        - name: albumId
+          in: path
+          required: true
+          description: The id of the album to update
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: title
+          in: path
+          required: true
+          description: The title of the album to update
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Album succesfully updated
+        '400':
+          description: The specified album ID is invalid (not a number)
+        '401':
+          description: An album with the specified ID was not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Deletes a specific album
+      operationId: deleteAlbumById
+      parameters:
+        - name: albumId
+          in: path
+          required: true
+          description: The id of the album to delete
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Album succesfully deleted
+        '400':
+          description: The specified album ID is invalid (not a number)
+        '401':
+          description: An album with the specified ID was not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Album:
+      title: Album
+      type: object
+      properties:
+        id:
+          description: Album ID
+          type: integer
+          format: int64
+          example: 123
+          maxLength: 36
+        genre:
+          $ref: '#/components/schemas/Genre'
+        title:
+          type: string
+          description: Album title
+          example: Out of a Center Which Is Neither Dead Nor Alive
+          maxLength: 250
+        band:
+          $ref: '#/components/schemas/Band'
+        albumDescription:
+          type: string
+          description: Album description
+          example: Sample album description
+          maxLength: 550
+      required:
+        - id
+        - type
+        - title
+        - band
+    Albums:
+      type: array
+      items:
+        $ref: "#/components/schemas/Album"
+    Genre:
+      title: Music genre
+      type: string
+      enum:
+        - POP
+        - ROCK
+        - METAL
+        - JAZZ
+    Band:
+      title: Band object
+      type: object
+      properties:
+        id:
+          description: Band ID
+          type: integer
+          format: int64
+          example: 123
+          maxLength: 36
+        name:
+          type: string
+          description: Band name
+          example: Minsk
+          maxLength: 250
+        bandDescription:
+          description: Band description
+          type: string
+          example: Sample band description
+          maxLength: 550
+      required:
+        - id
+        - name
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

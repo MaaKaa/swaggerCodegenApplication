@@ -1,0 +1,166 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.2.3.RELEASE"
+        classpath('io.swagger.codegen.v3:swagger-codegen-maven-plugin:3.0.16')
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'groovy'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'pl.maakaa'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Hoxton.RELEASE"
+    }
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+    //javax annotations
+    implementation "javax.xml.bind:jaxb-api:2.3.0"
+    implementation "com.sun.xml.bind:jaxb-core:2.3.0"
+    implementation "com.sun.xml.bind:jaxb-impl:2.3.0"
+    implementation "javax.validation:validation-api:2.0.1.Final"
+    //junit 4
+    implementation 'junit:junit:4.12'
+
+    //junit 5
+	testCompileOnly "org.junit.jupiter:junit-jupiter-params:5.5.2"
+	testRuntimeOnly "org.junit.jupiter:junit-jupiter-api:5.5.2"
+	testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.5.2"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.5.2"
+
+	//lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	// mockito
+	testCompileOnly "org.mockito:mockito-core:3.3.3"
+	testCompileOnly "org.mockito:mockito-junit-jupiter:3.3.3"
+
+    //spring
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	//swagger
+	implementation "io.springfox:springfox-swagger2:2.9.2"
+	implementation "io.springfox:springfox-swagger-ui:2.9.2"
+
+	//dependencies for a swagger codegen
+	implementation "io.swagger.core.v3:swagger-annotations:2.1.4"
+	implementation "org.threeten:threetenbp:1.4.5"
+	implementation "com.github.joschi.jackson:jackson-datatype-threetenbp:2.6.4"
+
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        exclude group: 'junit', module: 'junit'
+	}
+}
+
+bootJar.enabled = true
+
+bootJar {
+    launchScript()
+}
+
+springBoot {
+    //set the main class (because the is also a main class in the dir generated from openAPI)
+    mainClassName = 'pl.maakaa.SwaggerCodegenApplication'
+    buildInfo()
+}
+
+test {
+	useJUnitPlatform()
+}
+
+//generate (in the compile time) Albums API REST server from an openAPI definition:
+import io.swagger.codegen.v3.CodegenConfigLoader
+import io.swagger.codegen.v3.DefaultGenerator
+import io.swagger.codegen.v3.ClientOptInput
+import io.swagger.codegen.v3.ClientOpts
+import io.swagger.v3.parser.OpenAPIV3Parser
+
+ext.openapiUniewaznianie  = "$rootDir/src/main/resources/albums_api_v1.yml"
+ext.apiPackageUniewaznianie   = 'pl.maakaa.swaggerCodegen.api'
+ext.modelPackageUniewaznianie = 'pl.maakaa.swaggerCodegen.model'
+
+task generateAlbumsServer {
+  doLast {
+    def openAPI = new OpenAPIV3Parser().read(rootProject.openapiUniewaznianie.toString(), null, null)
+    def clientOpts = new ClientOptInput().openAPI(openAPI)
+    def codegenConfig = CodegenConfigLoader.forName('spring')
+    def generatedSourcesDir = "$buildDir/generated/openapi"
+    codegenConfig.setOutputDir(generatedSourcesDir.toString())
+    clientOpts.setConfig(codegenConfig)
+    def clientOps = new ClientOpts()
+    clientOps.setProperties([
+      'dateLibrary'     : 'java8-localdatetime',
+      'useTags'         : 'true',
+      'interfaceOnly'   : 'false',
+      'components'      : ['models','apis'],
+      'generateSupportingFiles' : 'false',
+      'delegatePattern' : 'true',
+      'apiPackage'       : project.apiPackageUniewaznianie,
+      'modelPackage'     : project.modelPackageUniewaznianie,
+    ])
+    clientOpts.setOpts(clientOps)
+
+    def generator = new DefaultGenerator().opts(clientOpts)
+    generator.generate()
+  }
+}
+
+/*
+// generate Albums API Client from an openAPI definition (in the compile time):
+ext.openapiCallback  = "$rootDir/src/main/resources/albums_api_v1.yml"
+ext.apiPackageCallback   = 'pl.maakaa.swaggerCodegen.api'
+ext.modelPackageCallback = 'pl.maakaa.swaggerCodegen.model'
+
+task generateAlbumsClient {
+  doLast {
+    def openAPI = new OpenAPIV3Parser().read(rootProject.openapiCallback.toString(), null, null)
+    def clientOpts = new ClientOptInput().openAPI(openAPI)
+    def codegenConfig = CodegenConfigLoader.forName('java')
+    def generatedSourcesDir = "$buildDir/generated/openapi"
+    codegenConfig.setOutputDir(generatedSourcesDir.toString())
+    clientOpts.setConfig(codegenConfig)
+    def clientOps = new ClientOpts()
+    clientOps.setProperties([
+      'library' : 'resttemplate',
+      'modelNameSuffix'   : 'Dto',
+      'apiPackage'       : project.apiPackageCallback,
+      'modelPackage'     : project.modelPackageCallback,
+    ])
+    clientOpts.setOpts(clientOps)
+
+    def generator = new DefaultGenerator().opts(clientOpts)
+    generator.generate()
+  }
+}
+
+compileJava.dependsOn('generateAlbumsServer','generateAlbumsClient') */
+
+compileJava.dependsOn('generateAlbumsServer')
+
+//mark generated 'openapi' dir as sources dir
+sourceSets.main.java.srcDir new File(buildDir, 'generated/openapi')
+
+idea {
+  module {
+    generatedSourceDirs += file('build/generated/openapi')
+  }
+}

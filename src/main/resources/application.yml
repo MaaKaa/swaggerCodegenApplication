@@ -1,0 +1,14 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: Swagger Codegen testing App
+
+logging:
+  file:
+    name: "swaggerCodegen.log" # nazwa pliku z logami
+    path: / # ścieżka do pliku z logami
+  level:
+    root: INFO # poziom logowania dostępny w całym microserwisie
+    pl.maakaa.swaggerCodegen: DEBUG # poziom logowania w pakiecie
