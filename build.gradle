@@ -79,7 +79,7 @@ bootJar {
 
 springBoot {
     //set the main class (because the is also a main class in the dir generated from openAPI)
-    mainClassName = 'pl.maakaa.SwaggerCodegenApplication'
+    mainClassName = 'pl.maakaa.swaggerCodegen.SwaggerCodegenApplication'
     buildInfo()
 }
 
