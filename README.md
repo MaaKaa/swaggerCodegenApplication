@@ -62,17 +62,23 @@ I created a @Service class that implements the generated "ApiDelegate" interface
 7. In addition, in the build.gradle file you can also see an exemplary task to generate the client side (commented).
 
 ## How to test it:
-1. You can hit:
+1. You can hit the endpoints via curl, e.g.:
 
-   `curl http://localhost:8080/albums`
+   `curl http://localhost:8080/album`
    
-   `curl http://localhost:8080/albums/1`
+   `curl -X GET "http://localhost:8080/album/1" -H  "accept: application/json"`
+   
+   `curl -X POST "http://localhost:8080/album" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  "albumDescription": "Sample album description",  "band": {    "bandDescription": "Sample band description",    "id": 123,    "name": "The Ocean Collective"  },  "genre": "METAL",  "id": 123,  "title": "Precambrian"}"`
+   
+   `curl -X PUT "http://localhost:8080/album/1?title=New%20Title" -H  "accept: application/json"`
+   
+   `curl -X DELETE "http://localhost:8080/album/1" -H  "accept: application/json"`
    
 2. Or run the application:
 
     `./gradlew bootRun`
     
-    and go to the `http://localhost:8080/swagger-ui.html` - here you can test the endpoints using Swagger UI. To do so, simply choose the endpoint, click "Try it now" modify the request and send it.
+    and go to the `http://localhost:8080/swagger-ui.html` - here you can test the endpoints using Swagger UI. To do so, simply choose the endpoint, click "Try it now", modify the request and send it.
 
 ## Technologies
 Used tools/ frameworks:
