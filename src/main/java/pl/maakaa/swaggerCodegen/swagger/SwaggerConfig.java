@@ -14,7 +14,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * Klasa konfiguracyjna Swaggera.
+ * Configuration class for Swagger.
  */
 @Configuration
 @EnableSwagger2
@@ -34,7 +34,7 @@ public class SwaggerConfig {
 
     private ApiInfo createApiInfo() {
         return new ApiInfoBuilder()
-                .title("Some API description")
+                .title("Albums API")
                 .build();
     }
 

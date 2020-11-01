@@ -7,10 +7,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 import springfox.documentation.swagger.web.*;
 
 /**
- * Klasa konfiguracyjna Swagger UI.
+ * Configuration class for Swagger UI.
  */
 @Configuration
 public class SwaggerConfigUI extends WebMvcConfigurationSupport {
+
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("swagger-ui.html")
