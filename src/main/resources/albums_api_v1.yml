@@ -10,7 +10,7 @@ servers:
   - url: http://localhost:8080/
     description: Test server
 paths: # The paths section defines individual endpoints (paths) in API, and the HTTP methods (operations) supported by these endpoints.
-  /albums:
+  /album:
     get:
       summary: Returns a list all the albums
       operationId: getAlbums
@@ -41,7 +41,7 @@ paths: # The paths section defines individual endpoints (paths) in API, and the 
             schema:
               $ref: "#/components/schemas/Album"
       responses:
-        '201':
+        '200':
           description: Album was succesfully created
         '400':
           description: Album cannot be created
@@ -51,7 +51,7 @@ paths: # The paths section defines individual endpoints (paths) in API, and the 
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /albums/{albumId}:
+  /album/{albumId}:
     get:
       summary: Returns the details of a specific album
       operationId: showAlbumById
@@ -94,7 +94,7 @@ paths: # The paths section defines individual endpoints (paths) in API, and the 
             format: int64
             minimum: 1
         - name: title
-          in: path
+          in: query
           required: true
           description: The title of the album to update
           schema:
@@ -148,7 +148,6 @@ components:
           type: integer
           format: int64
           example: 123
-          maxLength: 36
         genre:
           $ref: '#/components/schemas/Genre'
         title:
@@ -167,11 +166,6 @@ components:
         - id
         - type
         - title
-        - band
-    Albums:
-      type: array
-      items:
-        $ref: "#/components/schemas/Album"
     Genre:
       title: Music genre
       type: string
@@ -189,7 +183,6 @@ components:
           type: integer
           format: int64
           example: 123
-          maxLength: 36
         name:
           type: string
           description: Band name
