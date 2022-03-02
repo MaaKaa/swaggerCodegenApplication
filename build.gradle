@@ -94,13 +94,13 @@ import io.swagger.codegen.v3.ClientOptInput
 import io.swagger.codegen.v3.ClientOpts
 import io.swagger.v3.parser.OpenAPIV3Parser
 
-ext.openapiUniewaznianie  = "$rootDir/src/main/resources/albums_api_v1.yml"
-ext.apiPackageUniewaznianie   = 'pl.maakaa.swaggerCodegen.api'
-ext.modelPackageUniewaznianie = 'pl.maakaa.swaggerCodegen.model'
+ext.openapiDefinition  = "$rootDir/src/main/resources/albums_api_v1.yml"
+ext.apiPackage   = 'pl.maakaa.swaggerCodegen.api'
+ext.modelPackage = 'pl.maakaa.swaggerCodegen.model'
 
 task generateAlbumsServer {
   doLast {
-    def openAPI = new OpenAPIV3Parser().read(rootProject.openapiUniewaznianie.toString(), null, null)
+    def openAPI = new OpenAPIV3Parser().read(rootProject.openapiDefinition.toString(), null, null)
     def clientOpts = new ClientOptInput().openAPI(openAPI)
     def codegenConfig = CodegenConfigLoader.forName('spring')
     def generatedSourcesDir = "$buildDir/generated/openapi"
@@ -114,8 +114,8 @@ task generateAlbumsServer {
       'components'      : ['models','apis'],
       'generateSupportingFiles' : 'false',
       'delegatePattern' : 'true',
-      'apiPackage'       : project.apiPackageUniewaznianie,
-      'modelPackage'     : project.modelPackageUniewaznianie,
+      'apiPackage'       : project.apiPackage,
+      'modelPackage'     : project.modelPackage,
     ])
     clientOpts.setOpts(clientOps)
 
@@ -126,13 +126,13 @@ task generateAlbumsServer {
 
 /*
 // generate Albums API Client from an openAPI definition (in the compile time):
-ext.openapiCallback  = "$rootDir/src/main/resources/albums_api_v1.yml"
-ext.apiPackageCallback   = 'pl.maakaa.swaggerCodegen.api'
-ext.modelPackageCallback = 'pl.maakaa.swaggerCodegen.model'
+ext.openapiClientDefinition  = "$rootDir/src/main/resources/albums_api_v1.yml"
+ext.apiPackageClient   = 'pl.maakaa.swaggerCodegen.api'
+ext.modelPackageClient = 'pl.maakaa.swaggerCodegen.model'
 
 task generateAlbumsClient {
   doLast {
-    def openAPI = new OpenAPIV3Parser().read(rootProject.openapiCallback.toString(), null, null)
+    def openAPI = new OpenAPIV3Parser().read(rootProject.openapiClientDefinition.toString(), null, null)
     def clientOpts = new ClientOptInput().openAPI(openAPI)
     def codegenConfig = CodegenConfigLoader.forName('java')
     def generatedSourcesDir = "$buildDir/generated/openapi"
@@ -142,8 +142,8 @@ task generateAlbumsClient {
     clientOps.setProperties([
       'library' : 'resttemplate',
       'modelNameSuffix'   : 'Dto',
-      'apiPackage'       : project.apiPackageCallback,
-      'modelPackage'     : project.modelPackageCallback,
+      'apiPackage'       : project.apiPackageClient,
+      'modelPackage'     : project.modelPackageClient,
     ])
     clientOpts.setOpts(clientOps)
 
